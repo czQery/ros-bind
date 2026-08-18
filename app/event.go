@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/MarinX/keylogger"
@@ -20,9 +19,9 @@ func Event(e *keylogger.InputEvent) {
 					defer EventMutex.Unlock()
 
 					if EventStates[bind.ID()] {
-						fmt.Println("BIND TOGGLE UNSET", bind.ID())
+						go EventRun(bind, true)
 					} else {
-						fmt.Println("BIND TOGGLE SET", bind.ID())
+						go EventRun(bind, false)
 					}
 
 					EventStates[bind.ID()] = !EventStates[bind.ID()]
@@ -30,19 +29,26 @@ func Event(e *keylogger.InputEvent) {
 				}
 
 				if bind.Default {
-					fmt.Println("BIND HOLD UNSET", bind.ID())
+					go EventRun(bind, true)
 				} else {
-					fmt.Println("BIND HOLD SET", bind.ID())
+					go EventRun(bind, false)
 				}
 			} else if e.KeyRelease() && !bind.Toggle {
 				if bind.Default {
-					fmt.Println("BIND HOLD SET", bind.ID())
+					go EventRun(bind, false)
 				} else {
-					fmt.Println("BIND HOLD UNSET", bind.ID())
+					go EventRun(bind, true)
 				}
 			}
 
 			return
 		}
+	}
+}
+
+func EventRun(bind configBind, disable bool) {
+	switch bind.Target {
+	case "firewall":
+		RouterDisableFirewall(bind.Name, disable)
 	}
 }

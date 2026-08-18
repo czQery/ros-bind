@@ -10,13 +10,13 @@ import (
 var Config config
 
 type config struct {
-	Keyboard string         `json:"keyboard"`
-	Mouse    string         `json:"mouse"`
-	Mikrotik configMikrotik `json:"mikrotik"`
-	Binds    []configBind   `json:"binds"`
+	Keyboard string       `json:"keyboard"`
+	Mouse    string       `json:"mouse"`
+	Router   configRouter `json:"router"`
+	Binds    []configBind `json:"binds"`
 }
 
-type configMikrotik struct {
+type configRouter struct {
 	IP       string `json:"ip"`
 	User     string `json:"user"`
 	Password string `json:"password"`
